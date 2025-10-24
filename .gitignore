@@ -44,3 +44,30 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .vscode/
+
+# -------------------------
+# 👇 Custom Nerdz World Rules
+# -------------------------
+
+# Flutter & build files
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.idea/
+
+# Firebase config
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# macOS
+.DS_Store
+
+# Xcode
+ios/Pods/
+ios/.symlinks/
+
+# Environment & logs
+.env
+*.log
