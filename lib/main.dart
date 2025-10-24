@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'signup_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const SoulNotesApp());
 }
 
@@ -15,63 +19,58 @@ class SoulNotesApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SoulNotes',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const ConnectionTestScreen(),
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      home: SignupPage(), // ✅ FIXED: No const
     );
   }
 }
 
-class ConnectionTestScreen extends StatefulWidget {
-  const ConnectionTestScreen({super.key});
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<ConnectionTestScreen> createState() => _ConnectionTestScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _ConnectionTestScreenState extends State<ConnectionTestScreen> {
-  bool _connected = false;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkFirebase();
-  }
-
-  Future<void> _checkFirebase() async {
-    try {
-      await Firebase.initializeApp();
-      setState(() {
-        _connected = true;
-      });
-    } catch (e) {
-      setState(() {
-        _connected = false;
-      });
-    }
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SignupPage()),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: _connected
-            ? const Text(
-                '🔥 Firebase Connected!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                ),
-              )
-            : const Text(
-                '⚠️ Not Connected',
-                style: TextStyle(fontSize: 22, color: Colors.grey),
-              ),
+        child: Text(
+          'Welcome to SoulNotes!',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class SignupPage extends StatelessWidget {
+  const SignupPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Create an Account')),
+      body: const Center(child: Text('Signup Screen')),
     );
   }
 }

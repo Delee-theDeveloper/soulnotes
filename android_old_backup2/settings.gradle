@@ -1,0 +1,33 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+def flutterSdkPath
+def localPropertiesFile = new File(rootDir, "local.properties")
+if (localPropertiesFile.exists()) {
+    Properties properties = new Properties()
+    localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
+    flutterSdkPath = properties.getProperty("flutter.sdk")
+}
+
+if (flutterSdkPath == null) {
+    throw new GradleException("Flutter SDK not found. Define flutter.sdk in local.properties.")
+}
+
+includeBuild("${flutterSdkPath}/packages/flutter_tools/gradle")
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "soulnotes_fresh"
+include(":app")
+project(":app").projectDir = new File(rootDir, "app")
