@@ -22,19 +22,10 @@ flutter:
     - assets/splash_logo.png
 
 flutter_native_splash:
-  color: "#FFFFFF"
+  color: "#FFFFFF"             # white background
   image: assets/splash_logo.png
-  android: true
-  ios: true
-  web: false
-
-  # Android behavior
-  android_gravity: center
-  image_scale: 0.65 # makes it larger and disables circular mask cropping
-
+  ios_content_mode: center     # keeps logo centered
+  android_gravity: center      # centers on Android
   android_12:
-    color: "#FFFFFF"
     image: assets/splash_logo.png
-    android_gravity: center
-    icon_background_color: "#FFFFFF"
-    branding: false
+    color: "#FFFFFF"
