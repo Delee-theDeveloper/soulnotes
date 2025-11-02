@@ -1,0 +1,40 @@
+name: soulnotes
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_native_splash: ^2.4.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/SoulNotes_Logo.png
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/SoulNotes_Logo.png
+  android: true
+  ios: true
+  web: false
+
+  # Android behavior
+  android_gravity: center
+  image_scale: 0.65 # makes it larger and disables circular mask cropping
+
+  android_12:
+    color: "#FFFFFF"
+    image: assets/SoulNotes_Logo.png
+    android_gravity: center
+    icon_background_color: "#FFFFFF"
+    branding: false

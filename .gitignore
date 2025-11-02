@@ -1,0 +1,29 @@
+# Flutter
+.dart_tool/
+build/
+*.iml
+
+# Android
+android/.gradle/
+android/app/build/
+android/local.properties
+**/*.keystore
+**/*.jks
+*.aab
+*.apk
+
+# iOS
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+
+# Editors & OS
+.vscode/
+.idea/
+.DS_Store
+
+# Firebase client files are OK to commit for most apps.
+# If you want to keep them private, uncomment these lines:
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
