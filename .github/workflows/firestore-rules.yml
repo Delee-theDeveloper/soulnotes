@@ -1,0 +1,25 @@
+name: Firestore Rules Check
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Firebase CLI
+        run: npm i -g firebase-tools
+
+      # This will spin up the Firestore emulator and load firestore.rules.
+      # If rules have syntax errors or incompatible features, the step fails.
+      - name: Validate Firestore rules (emulator)
+        run: firebase emulators:exec --only firestore "echo Rules loaded OK"
