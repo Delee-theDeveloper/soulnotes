@@ -19,11 +19,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/SoulNotes_Logo.png
+    - assets/splash_logo.png
 
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/SoulNotes_Logo.png
+  image: assets/splash_logo.png
   android: true
   ios: true
   web: false
@@ -34,7 +34,7 @@ flutter_native_splash:
 
   android_12:
     color: "#FFFFFF"
-    image: assets/SoulNotes_Logo.png
+    image: assets/splash_logo.png
     android_gravity: center
     icon_background_color: "#FFFFFF"
     branding: false
