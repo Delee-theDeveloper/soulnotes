@@ -22,7 +22,7 @@ flutter:
     - assets/splash_logo.png
 
 flutter_native_splash:
-  color: "#FFFFFF"             # white background
+  color: "#FFFFFF" # white background
   image: assets/splash_logo.png
   ios_content_mode: center     # keeps logo centered
   android_gravity: center      # centers on Android
