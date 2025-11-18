@@ -1,12 +1,13 @@
 name: soulnotes
-description: "A new Flutter project."
-publish_to: 'none'
-version: 0.1.0
+description: "SoulNotes app"
+publish_to: "none"
+version: 1.0.0+1
 
 environment:
   sdk: ^3.9.2
 
 dependencies:
+  change_app_package_name: ^1.5.0
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.4.7
@@ -19,13 +20,28 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/splash_logo.png
+    - assets/sn_splash_cover.png      # iOS in-app splash
+    - assets/splash_logo2.png         # square logo (iOS + Android <12)
+    - assets/splash_1080.png
+    - assets/flowers.png
+    - assets/candle.png          
 
 flutter_native_splash:
-  color: "#FFFFFF" # white background
-  image: assets/splash_logo.png
-  ios_content_mode: center     # keeps logo centered
-  android_gravity: center      # centers on Android
+  color: "#FFFFFF"
+
+  # iOS & Android < 12: centered square logo
+  image: assets/splash_logo2.png
+  ios_content_mode: scaleAspectFit
+  android_gravity: center
+
+  # Android 12+: background only (no circle mask)
   android_12:
-    image: assets/splash_logo.png
+    background_image: assets/splash_1080.png
     color: "#FFFFFF"
+    icon_background_color: "#FFFFFF"
+    branding: false
+
+
+
+
+
