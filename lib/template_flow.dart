@@ -59,9 +59,14 @@ class TemplateBrowserPage extends StatelessWidget {
 }
 
 class TemplateEditorPage extends StatefulWidget {
-  const TemplateEditorPage({super.key, required this.initialTemplate});
+  const TemplateEditorPage({
+    super.key,
+    required this.initialTemplate,
+    this.existingTribute,
+  });
 
   final MemorialTemplate initialTemplate;
+  final SavedTribute? existingTribute;
 
   @override
   State<TemplateEditorPage> createState() => _TemplateEditorPageState();
@@ -85,20 +90,23 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
   void initState() {
     super.initState();
     _selectedTemplate = widget.initialTemplate;
+    final SavedTribute? existingTribute = widget.existingTribute;
     _selectedBackgroundAssetPath =
+        existingTribute?.backgroundAssetPath ??
         widget.initialTemplate.defaultBackgroundAssetPath;
     _headingController = TextEditingController(
-      text: widget.initialTemplate.initialHeading,
+      text: existingTribute?.heading ?? widget.initialTemplate.initialHeading,
     );
     _nameController = TextEditingController(
-      text: widget.initialTemplate.initialName,
+      text: existingTribute?.name ?? widget.initialTemplate.initialName,
     );
     _datesController = TextEditingController(
-      text: widget.initialTemplate.initialDates,
+      text: existingTribute?.dates ?? widget.initialTemplate.initialDates,
     );
     _messageController = TextEditingController(
-      text: widget.initialTemplate.initialMessage,
+      text: existingTribute?.message ?? widget.initialTemplate.initialMessage,
     );
+    _photoBytes = existingTribute?.photoBytes;
   }
 
   @override
@@ -136,7 +144,9 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
 
   void _saveToMyMemories() {
     final SavedTribute tribute = SavedTribute(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      id:
+          widget.existingTribute?.id ??
+          DateTime.now().microsecondsSinceEpoch.toString(),
       templateId: _selectedTemplate.id,
       backgroundAssetPath: _selectedBackgroundAssetPath,
       heading: _resolvedText(
@@ -153,10 +163,10 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
         _selectedTemplate.initialMessage,
       ),
       photoBytes: _photoBytes == null ? null : Uint8List.fromList(_photoBytes!),
-      createdAt: DateTime.now(),
+      createdAt: widget.existingTribute?.createdAt ?? DateTime.now(),
     );
 
-    MemoriesStore.add(tribute);
+    MemoriesStore.save(tribute);
     if (!mounted) {
       return;
     }
@@ -318,7 +328,11 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                     child: ElevatedButton.icon(
                       onPressed: _saveToMyMemories,
                       icon: const Icon(Icons.bookmark_added_rounded),
-                      label: const Text('Save to My Memories'),
+                      label: Text(
+                        widget.existingTribute == null
+                            ? 'Save to My Memories'
+                            : 'Update My Memory',
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _primary,
                         foregroundColor: Colors.white,

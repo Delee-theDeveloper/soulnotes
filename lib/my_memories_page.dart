@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'memories_store.dart';
+import 'template_flow.dart';
 
 class MyMemoriesPage extends StatelessWidget {
   const MyMemoriesPage({super.key});
@@ -267,6 +268,9 @@ class _SavedTributeTile extends StatelessWidget {
     _MemoriesAction action,
   ) async {
     switch (action) {
+      case _MemoriesAction.edit:
+        await _editTribute(context);
+        break;
       case _MemoriesAction.download:
         await _downloadTribute(context);
         break;
@@ -281,6 +285,22 @@ class _SavedTributeTile extends StatelessWidget {
         await _deleteTribute(context);
         break;
     }
+  }
+
+  Future<void> _editTribute(BuildContext context) async {
+    final MemorialTemplate template = memorialTemplates.firstWhere(
+      (item) => item.id == tribute.templateId,
+      orElse: () => memorialTemplates.first,
+    );
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TemplateEditorPage(
+          initialTemplate: template,
+          existingTribute: tribute,
+        ),
+      ),
+    );
   }
 
   Widget _menuItem(IconData icon, String label) {
@@ -342,6 +362,10 @@ class _SavedTributeTile extends StatelessWidget {
                       onSelected: (action) =>
                           _onActionSelected(context, action),
                       itemBuilder: (context) => [
+                        PopupMenuItem<_MemoriesAction>(
+                          value: _MemoriesAction.edit,
+                          child: _menuItem(Icons.edit_rounded, 'Edit'),
+                        ),
                         PopupMenuItem<_MemoriesAction>(
                           value: _MemoriesAction.download,
                           child: _menuItem(Icons.download_rounded, 'Download'),
@@ -443,6 +467,7 @@ class _SavedTributeTile extends StatelessWidget {
 }
 
 enum _MemoriesAction {
+  edit,
   download,
   share,
   shareSocial,
