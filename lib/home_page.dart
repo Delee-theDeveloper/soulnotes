@@ -5,8 +5,8 @@ import 'template_flow.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static const Color _backgroundTop = Color(0xFFFFFEFC);
-  static const Color _backgroundBottom = Color(0xFFF9F4ED);
+  static const Color _backgroundTop = Color(0xFFFFFFFF);
+  static const Color _backgroundBottom = Color(0xFFFCF9F4);
   static const Color _primary = Color(0xFF7A1824);
   static const Color _cardLight = Color(0xFFF4E4D8);
   static const Color _cardLighter = Color(0xFFFBEFE6);
@@ -49,121 +49,119 @@ class HomePage extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 14),
-              Center(
-                child: Image.asset(
-                  'assets/splash_logo2.png',
-                  height: 172,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 6, 24, 24),
-                  child: Column(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Transform.translate(
+              offset: const Offset(0, -8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Image.asset(
+                      'assets/splash_logo2.png',
+                      height: 172,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Transform.translate(
+                    offset: const Offset(0, -6),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Create a Tribute',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w700,
+                            color: _primary,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Start by Browsing our templates below:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF7A6253),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  _HomeCard(
+                    title: 'Browse Templates',
+                    subtitle: 'Pick a thoughtful starting layout',
+                    bgColor: _cardLight,
+                    imagePath: 'assets/flowers.png',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const TemplateBrowserPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  _HomeCard(
+                    title: 'My Memories',
+                    subtitle: 'Continue writing and updating tributes',
+                    bgColor: _cardLighter,
+                    imagePath: 'assets/candle.png',
+                  ),
+                  const SizedBox(height: 14),
+                  const _VintageDivider(),
+                  const SizedBox(height: 8),
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Create a Tribute',
+                      Text(
+                        'Community Wall',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: _primary,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Start by Browsing our templates below:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF7A6253),
-                        ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Recent updates from shared tributes.',
+                        style: TextStyle(fontSize: 14, color: Color(0xFF7A6253)),
                       ),
-                      const SizedBox(height: 18),
-                      _HomeCard(
-                        title: 'Browse Templates',
-                        subtitle: 'Pick a thoughtful starting layout',
-                        bgColor: _cardLight,
-                        imagePath: 'assets/flowers.png',
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const TemplateBrowserPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 14),
-                      _HomeCard(
-                        title: 'My Memories',
-                        subtitle: 'Continue writing and updating tributes',
-                        bgColor: _cardLighter,
-                        imagePath: 'assets/candle.png',
-                      ),
-                      const SizedBox(height: 26),
-                      Container(
-                        padding: const EdgeInsets.only(top: 14),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: Color(0xFFE4D5C6)),
-                          ),
-                        ),
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Community Wall',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                                color: _primary,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Recent updates from shared tributes.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF7A6253),
-                              ),
-                            ),
-                            SizedBox(height: 12),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: _surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFE8D6C7)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 18,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: List.generate(
-                            _communityPosts.length,
-                            (index) => _CommunityPostTile(
-                              post: _communityPosts[index],
-                              showDivider: index != _communityPosts.length - 1,
-                            ),
-                          ),
-                        ),
-                      ),
+                      SizedBox(height: 12),
                     ],
                   ),
-                ),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: _surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: _primary.withValues(alpha: 0.26),
+                        width: 1.2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: List.generate(
+                        _communityPosts.length,
+                        (index) => _CommunityPostTile(
+                          post: _communityPosts[index],
+                          showDivider: index != _communityPosts.length - 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -190,6 +188,7 @@ class HomePage extends StatelessWidget {
           selectedLabelStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
+            color: _primary,
           ),
           unselectedLabelStyle: const TextStyle(
             fontSize: 12,
@@ -198,23 +197,115 @@ class HomePage extends StatelessWidget {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_rounded),
+              activeIcon: _NavActiveIcon(icon: Icons.home_rounded),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Templates',
+              icon: Icon(Icons.notifications_active_rounded),
+              activeIcon: _NavActiveIcon(
+                icon: Icons.notifications_active_rounded,
+              ),
+              label: 'Reminders',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
+              activeIcon: _NavActiveIcon(icon: Icons.person_outline),
               label: 'Profile',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.more_horiz),
+              activeIcon: _NavActiveIcon(icon: Icons.more_horiz),
               label: 'More',
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _NavActiveIcon extends StatelessWidget {
+  const _NavActiveIcon({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: HomePage._primary,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Icon(
+        icon,
+        size: 20,
+        color: Colors.white,
+      ),
+    );
+  }
+}
+
+class _VintageDivider extends StatelessWidget {
+  const _VintageDivider();
+
+  static const Color _line = Color(0xFFC9A98E);
+  static const Color _accent = HomePage._primary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(child: _OrnateLine()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Icon(
+                Icons.diamond_rounded,
+                size: 12,
+                color: _accent.withValues(alpha: 0.6),
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.auto_awesome_rounded, size: 15, color: _accent),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.diamond_rounded,
+                size: 12,
+                color: _accent.withValues(alpha: 0.6),
+              ),
+            ],
+          ),
+        ),
+        const Expanded(child: _OrnateLine()),
+      ],
+    );
+  }
+}
+
+class _OrnateLine extends StatelessWidget {
+  const _OrnateLine();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 5,
+          child: Container(
+            height: 1.2,
+            color: _VintageDivider._line.withValues(alpha: 0.75),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          flex: 2,
+          child: Container(
+            height: 1.2,
+            color: _VintageDivider._line.withValues(alpha: 0.45),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -382,7 +473,10 @@ class _HomeCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.85)),
+            border: Border.all(
+              color: HomePage._primary.withValues(alpha: 0.3),
+              width: 1.4,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.08),

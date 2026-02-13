@@ -18,19 +18,19 @@ class _WelcomeFlowState extends State<WelcomeFlow> {
 
   final List<_WelcomePageData> _pages = const [
     _WelcomePageData(
-      icon: Icons.favorite_outline_rounded,
+      imagePath: 'assets/images/wel1.png',
       title: 'Welcome to SoulNotes',
       description:
           'A gentle place to honor loved ones, keep their stories alive, and revisit meaningful moments.',
     ),
     _WelcomePageData(
-      icon: Icons.auto_stories_outlined,
+      imagePath: 'assets/images/wel2.jpg',
       title: 'Create Thoughtful Tributes',
       description:
           'Build tributes with words, photos, and memories that celebrate life with warmth and intention.',
     ),
     _WelcomePageData(
-      icon: Icons.groups_2_outlined,
+      imagePath: 'assets/images/wel3.jpg',
       title: 'Share and Remember Together',
       description:
           'Invite family and friends to contribute memories and grow a living collection of remembrance.',
@@ -44,9 +44,9 @@ class _WelcomeFlowState extends State<WelcomeFlow> {
   }
 
   void _goToHome() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => HomePage()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
   }
 
   Future<void> _onContinue() async {
@@ -169,21 +169,36 @@ class _WelcomeCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: _primary.withValues(alpha: 0.7),
+          width: 1.4,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 76,
-            height: 76,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.65),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              page.icon,
-              color: _primary,
-              size: 36,
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.asset(
+                page.imagePath,
+                fit: BoxFit.cover,
+                cacheWidth: 176,
+                cacheHeight: 176,
+                errorBuilder: (context, error, stackTrace) {
+                  return const ColoredBox(
+                    color: Color(0xFFEEDFD3),
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: _primary,
+                      size: 30,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(height: 24),
@@ -215,12 +230,12 @@ class _WelcomeCard extends StatelessWidget {
 
 class _WelcomePageData {
   const _WelcomePageData({
-    required this.icon,
+    required this.imagePath,
     required this.title,
     required this.description,
   });
 
-  final IconData icon;
+  final String imagePath;
   final String title;
   final String description;
 }

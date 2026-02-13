@@ -6,63 +6,9 @@ import 'package:image_picker/image_picker.dart';
 class TemplateBrowserPage extends StatelessWidget {
   const TemplateBrowserPage({super.key});
 
-  static const Color _backgroundTop = Color(0xFFFBF3EA);
-  static const Color _backgroundBottom = Color(0xFFF3E2D3);
+  static const Color _backgroundTop = Color(0xFFFBF4EC);
+  static const Color _backgroundBottom = Color(0xFFF3E6D8);
   static const Color _primary = Color(0xFF7A1824);
-
-  static const List<MemorialTemplate> _templates = [
-    MemorialTemplate(
-      id: 'classic_memory',
-      name: 'Classic Memory',
-      subtitle: 'Warm cream background with elegant tribute typography',
-      initialHeading: 'In Loving Memory',
-      initialName: 'Elizabeth Johnson',
-      initialDates: 'May 12, 1946 - Sept. 5, 2022',
-      initialMessage: 'Always in our hearts, forever loved and missed.',
-      previewImagePath: 'assets/flowers.png',
-      palette: TemplatePalette(
-        name: 'Warm Cream',
-        backgroundTop: Color(0xFFF8F0E2),
-        backgroundBottom: Color(0xFFF1E3D0),
-        headingColor: Color(0xFF7A1824),
-        bodyColor: Color(0xFF26221F),
-      ),
-    ),
-    MemorialTemplate(
-      id: 'sunrise',
-      name: 'Soft Sunrise',
-      subtitle: 'Gentle tan tones with a peaceful feel',
-      initialHeading: 'Forever Remembered',
-      initialName: 'Avery Williams',
-      initialDates: 'Jan. 18, 1951 - Aug. 2, 2021',
-      initialMessage: 'Your kindness and laughter remain with us each day.',
-      previewImagePath: 'assets/candle.png',
-      palette: TemplatePalette(
-        name: 'Soft Tan',
-        backgroundTop: Color(0xFFF8EEE1),
-        backgroundBottom: Color(0xFFEEDFCB),
-        headingColor: Color(0xFF734231),
-        bodyColor: Color(0xFF3A3029),
-      ),
-    ),
-    MemorialTemplate(
-      id: 'serene_sky',
-      name: 'Serene Sky',
-      subtitle: 'Light parchment palette for reflective tributes',
-      initialHeading: 'In Loving Memory',
-      initialName: 'Daniel Harper',
-      initialDates: 'Feb. 2, 1949 - Nov. 14, 2023',
-      initialMessage: 'Rest in peace. Your legacy lives on in every story.',
-      previewImagePath: 'assets/sn_splash_cover.png',
-      palette: TemplatePalette(
-        name: 'Parchment',
-        backgroundTop: Color(0xFFFAF1E4),
-        backgroundBottom: Color(0xFFF1E3CF),
-        headingColor: Color(0xFF6A3C2D),
-        bodyColor: Color(0xFF3B3029),
-      ),
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -87,16 +33,17 @@ class TemplateBrowserPage extends StatelessWidget {
         ),
         child: ListView.separated(
           padding: const EdgeInsets.fromLTRB(18, 10, 18, 24),
-          itemCount: _templates.length,
+          itemCount: memorialTemplates.length,
           separatorBuilder: (_, _) => const SizedBox(height: 14),
           itemBuilder: (context, index) {
-            final MemorialTemplate template = _templates[index];
+            final MemorialTemplate template = memorialTemplates[index];
             return _TemplateCard(
               template: template,
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => TemplateEditorPage(template: template),
+                    builder: (_) =>
+                        TemplateEditorPage(initialTemplate: template),
                   ),
                 );
               },
@@ -109,9 +56,9 @@ class TemplateBrowserPage extends StatelessWidget {
 }
 
 class TemplateEditorPage extends StatefulWidget {
-  const TemplateEditorPage({super.key, required this.template});
+  const TemplateEditorPage({super.key, required this.initialTemplate});
 
-  final MemorialTemplate template;
+  final MemorialTemplate initialTemplate;
 
   @override
   State<TemplateEditorPage> createState() => _TemplateEditorPageState();
@@ -128,46 +75,26 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
   late final TextEditingController _messageController;
 
   Uint8List? _photoBytes;
-  late TemplatePalette _selectedPalette;
-
-  List<TemplatePalette> get _paletteOptions => <TemplatePalette>[
-    widget.template.palette,
-    const TemplatePalette(
-      name: 'Light Tan',
-      backgroundTop: Color(0xFFFAEFE1),
-      backgroundBottom: Color(0xFFF1E2CD),
-      headingColor: Color(0xFF744433),
-      bodyColor: Color(0xFF3B302A),
-    ),
-    const TemplatePalette(
-      name: 'Stone Beige',
-      backgroundTop: Color(0xFFF4E8D9),
-      backgroundBottom: Color(0xFFEAD9C6),
-      headingColor: Color(0xFF5B332A),
-      bodyColor: Color(0xFF302723),
-    ),
-    const TemplatePalette(
-      name: 'Warm Linen',
-      backgroundTop: Color(0xFFF9F1E7),
-      backgroundBottom: Color(0xFFEEE0CF),
-      headingColor: Color(0xFF6A3E2E),
-      bodyColor: Color(0xFF352B24),
-    ),
-  ];
+  late MemorialTemplate _selectedTemplate;
+  late String _selectedBackgroundAssetPath;
 
   @override
   void initState() {
     super.initState();
-    _selectedPalette = widget.template.palette;
+    _selectedTemplate = widget.initialTemplate;
+    _selectedBackgroundAssetPath =
+        widget.initialTemplate.defaultBackgroundAssetPath;
     _headingController = TextEditingController(
-      text: widget.template.initialHeading,
+      text: widget.initialTemplate.initialHeading,
     );
-    _nameController = TextEditingController(text: widget.template.initialName);
+    _nameController = TextEditingController(
+      text: widget.initialTemplate.initialName,
+    );
     _datesController = TextEditingController(
-      text: widget.template.initialDates,
+      text: widget.initialTemplate.initialDates,
     );
     _messageController = TextEditingController(
-      text: widget.template.initialMessage,
+      text: widget.initialTemplate.initialMessage,
     );
   }
 
@@ -204,7 +131,7 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          '${widget.template.name} Editor',
+          '${_selectedTemplate.name} Editor',
           style: const TextStyle(color: _primary, fontWeight: FontWeight.w700),
         ),
       ),
@@ -213,13 +140,13 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
             _PreviewCard(
-              palette: _selectedPalette,
+              template: _selectedTemplate,
+              backgroundAssetPath: _selectedBackgroundAssetPath,
               heading: _headingController.text,
               name: _nameController.text,
               dates: _datesController.text,
               message: _messageController.text,
               photoBytes: _photoBytes,
-              placeholderImagePath: widget.template.previewImagePath,
             ),
             const SizedBox(height: 16),
             Container(
@@ -239,6 +166,39 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
+                    'Choose Template Format',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: _primary,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 165,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: memorialTemplates.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 10),
+                      itemBuilder: (context, index) {
+                        final MemorialTemplate template =
+                            memorialTemplates[index];
+                        return _TemplateChoice(
+                          template: template,
+                          selected: template.id == _selectedTemplate.id,
+                          onTap: () {
+                            setState(() {
+                              _selectedTemplate = template;
+                              _selectedBackgroundAssetPath =
+                                  template.defaultBackgroundAssetPath;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const Text(
                     'Choose Background',
                     style: TextStyle(
                       fontSize: 16,
@@ -247,53 +207,25 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _paletteOptions.map((TemplatePalette palette) {
-                      final bool isSelected = palette == _selectedPalette;
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedPalette = palette;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                palette.backgroundTop,
-                                palette.backgroundBottom,
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isSelected ? _primary : Colors.white,
-                              width: isSelected ? 2 : 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.06),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            palette.name,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: palette.headingColor,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                  SizedBox(
+                    height: 110,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: tributeBackgroundAssets.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 10),
+                      itemBuilder: (context, index) {
+                        final String assetPath = tributeBackgroundAssets[index];
+                        return _BackgroundChoice(
+                          assetPath: assetPath,
+                          selected: assetPath == _selectedBackgroundAssetPath,
+                          onTap: () {
+                            setState(() {
+                              _selectedBackgroundAssetPath = assetPath;
+                            });
+                          },
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(height: 14),
                   SizedBox(
@@ -327,21 +259,21 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                   _EditorField(
                     controller: _nameController,
                     label: 'Full Name',
-                    hint: 'Elizabeth Johnson',
+                    hint: 'Margaret Williams',
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 10),
                   _EditorField(
                     controller: _datesController,
                     label: 'Dates',
-                    hint: 'May 12, 1946 - Sept. 5, 2022',
+                    hint: 'March 8, 1952 - July 21, 2023',
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 10),
                   _EditorField(
                     controller: _messageController,
                     label: 'Personal Message',
-                    hint: 'Always in our hearts, forever loved and missed.',
+                    hint: 'Forever remembered. Forever cherished.',
                     maxLines: 3,
                     onChanged: (_) => setState(() {}),
                   ),
@@ -427,9 +359,14 @@ class _TemplateCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              _MiniTemplatePreview(
-                palette: template.palette,
-                previewImagePath: template.previewImagePath,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  template.templateAssetPath,
+                  width: 88,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
               ),
             ],
           ),
@@ -439,95 +376,58 @@ class _TemplateCard extends StatelessWidget {
   }
 }
 
-class _MiniTemplatePreview extends StatelessWidget {
-  const _MiniTemplatePreview({
-    required this.palette,
-    required this.previewImagePath,
+class _TemplateChoice extends StatelessWidget {
+  const _TemplateChoice({
+    required this.template,
+    required this.selected,
+    required this.onTap,
   });
 
-  final TemplatePalette palette;
-  final String previewImagePath;
+  final MemorialTemplate template;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 88,
-      height: 144,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [palette.backgroundTop, palette.backgroundBottom],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 98,
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? template.headingColor : const Color(0xFFE2D3C5),
+            width: selected ? 2 : 1,
+          ),
         ),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Stack(
-        children: [
-          Align(
-            alignment: const Alignment(0, -0.82),
-            child: Text(
-              'In Loving\nMemory',
-              textAlign: TextAlign.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  template.templateAssetPath,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              template.name,
               style: TextStyle(
-                color: palette.headingColor,
-                fontSize: 8.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
+                color: selected
+                    ? template.headingColor
+                    : const Color(0xFF6D5245),
               ),
             ),
-          ),
-          Align(
-            alignment: const Alignment(0, -0.2),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: 62,
-                height: 72,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.88),
-                    width: 1.2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(previewImagePath, fit: BoxFit.cover),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            palette.headingColor.withValues(alpha: 0.12),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: const Alignment(0, 0.73),
-            child: Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: palette.bodyColor.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(99),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -535,38 +435,164 @@ class _MiniTemplatePreview extends StatelessWidget {
 
 class _PreviewCard extends StatelessWidget {
   const _PreviewCard({
-    required this.palette,
+    required this.template,
+    required this.backgroundAssetPath,
     required this.heading,
     required this.name,
     required this.dates,
     required this.message,
     required this.photoBytes,
-    required this.placeholderImagePath,
   });
 
-  final TemplatePalette palette;
+  final MemorialTemplate template;
+  final String backgroundAssetPath;
   final String heading;
   final String name;
   final String dates;
   final String message;
   final Uint8List? photoBytes;
-  final String placeholderImagePath;
+
+  TextStyle _headingStyle() {
+    switch (template.style) {
+      case TributeLayoutStyle.classicMaroon:
+        return TextStyle(
+          fontSize: 27,
+          fontWeight: FontWeight.w600,
+          color: template.headingColor,
+        );
+      case TributeLayoutStyle.modernGray:
+        return TextStyle(
+          fontSize: 26,
+          fontWeight: FontWeight.w500,
+          color: template.headingColor,
+        );
+      case TributeLayoutStyle.roseElegance:
+        return TextStyle(
+          fontSize: 27,
+          fontWeight: FontWeight.w600,
+          color: template.headingColor,
+        );
+    }
+  }
+
+  TextStyle _nameStyle() {
+    switch (template.style) {
+      case TributeLayoutStyle.modernGray:
+        return TextStyle(
+          fontSize: 49,
+          height: 1.0,
+          fontWeight: FontWeight.w600,
+          color: template.headingColor,
+        );
+      case TributeLayoutStyle.classicMaroon:
+      case TributeLayoutStyle.roseElegance:
+        return TextStyle(
+          fontSize: 50,
+          height: 0.98,
+          fontWeight: FontWeight.w600,
+          color: template.headingColor,
+        );
+    }
+  }
+
+  Widget _separator() {
+    switch (template.style) {
+      case TributeLayoutStyle.modernGray:
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 12),
+          height: 1,
+          color: template.accentColor.withValues(alpha: 0.8),
+        );
+      case TributeLayoutStyle.classicMaroon:
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: template.accentColor.withValues(alpha: 0.7),
+                  thickness: 1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(
+                  Icons.auto_awesome,
+                  size: 14,
+                  color: template.accentColor,
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: template.accentColor.withValues(alpha: 0.7),
+                  thickness: 1,
+                ),
+              ),
+            ],
+          ),
+        );
+      case TributeLayoutStyle.roseElegance:
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: template.accentColor.withValues(alpha: 0.72),
+                  thickness: 1.2,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(
+                  Icons.local_florist_rounded,
+                  size: 16,
+                  color: template.accentColor,
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: template.accentColor.withValues(alpha: 0.72),
+                  thickness: 1.2,
+                ),
+              ),
+            ],
+          ),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final String headingText = heading.trim().isEmpty
+        ? template.initialHeading
+        : heading.trim();
+    final String nameText = name.trim().isEmpty
+        ? template.initialName
+        : name.trim();
+    final String datesText = dates.trim().isEmpty
+        ? template.initialDates
+        : dates.trim();
+    final String messageText = message.trim().isEmpty
+        ? template.initialMessage
+        : message.trim();
+
     return AspectRatio(
       aspectRatio: 9 / 16,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [palette.backgroundTop, palette.backgroundBottom],
+          image: DecorationImage(
+            image: AssetImage(backgroundAssetPath),
+            fit: BoxFit.cover,
+          ),
+          border: Border.all(
+            color: template.accentColor.withValues(alpha: 0.36),
+            width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
+              color: Colors.black.withValues(alpha: 0.14),
               blurRadius: 22,
               offset: const Offset(0, 10),
             ),
@@ -574,91 +600,79 @@ class _PreviewCard extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 20),
-            child: Column(
-              children: [
-                Text(
-                  heading.trim().isEmpty ? 'In Loving Memory' : heading,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 26,
-                    height: 1.2,
-                    fontWeight: FontWeight.w700,
-                    color: palette.headingColor,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  template.backgroundTop.withValues(alpha: 0.55),
+                  template.backgroundBottom.withValues(alpha: 0.68),
+                ],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 22, 18, 20),
+              child: Column(
+                children: [
+                  Text(
+                    headingText,
+                    textAlign: TextAlign.center,
+                    style: _headingStyle(),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      borderRadius: BorderRadius.circular(24),
+                  const SizedBox(height: 14),
+                  Expanded(
+                    child: Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        color: Colors.white.withValues(alpha: 0.36),
+                      ),
+                      child: photoBytes != null
+                          ? Image.memory(
+                              photoBytes!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            )
+                          : Image.asset(
+                              template.placeholderPortraitPath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
                     ),
-                    clipBehavior: Clip.antiAlias,
-                    child: photoBytes != null
-                        ? Image.memory(
-                            photoBytes!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          )
-                        : Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              Image.asset(
-                                placeholderImagePath,
-                                fit: BoxFit.cover,
-                              ),
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.white.withValues(alpha: 0.14),
-                                      palette.headingColor.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  name.trim().isEmpty ? 'Full Name' : name,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 38,
-                    height: 1.02,
-                    fontWeight: FontWeight.w600,
-                    color: palette.headingColor,
+                  const SizedBox(height: 16),
+                  Text(
+                    nameText,
+                    textAlign: TextAlign.center,
+                    style: _nameStyle(),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  dates.trim().isEmpty ? 'Birth - Departure' : dates,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: palette.bodyColor,
+                  const SizedBox(height: 8),
+                  Text(
+                    datesText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 17,
+                      height: 1.2,
+                      fontWeight: FontWeight.w600,
+                      color: template.bodyColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  message.trim().isEmpty ? 'Always in our hearts.' : message,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.5,
-                    height: 1.35,
-                    color: palette.bodyColor,
+                  _separator(),
+                  Text(
+                    template.style == TributeLayoutStyle.roseElegance
+                        ? '“$messageText”'
+                        : messageText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15.5,
+                      height: 1.35,
+                      color: template.bodyColor,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -710,42 +724,146 @@ class _EditorField extends StatelessWidget {
   }
 }
 
+class _BackgroundChoice extends StatelessWidget {
+  const _BackgroundChoice({
+    required this.assetPath,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String assetPath;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 80,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? const Color(0xFF7A1824) : const Color(0xFFE2D3C5),
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(9),
+          child: Image.asset(assetPath, fit: BoxFit.cover),
+        ),
+      ),
+    );
+  }
+}
+
+enum TributeLayoutStyle { classicMaroon, modernGray, roseElegance }
+
 class MemorialTemplate {
   const MemorialTemplate({
     required this.id,
     required this.name,
     required this.subtitle,
+    required this.templateAssetPath,
+    required this.placeholderPortraitPath,
+    required this.style,
     required this.initialHeading,
     required this.initialName,
     required this.initialDates,
     required this.initialMessage,
-    required this.previewImagePath,
-    required this.palette,
+    required this.defaultBackgroundAssetPath,
+    required this.backgroundTop,
+    required this.backgroundBottom,
+    required this.headingColor,
+    required this.bodyColor,
+    required this.accentColor,
   });
 
   final String id;
   final String name;
   final String subtitle;
+  final String templateAssetPath;
+  final String placeholderPortraitPath;
+  final TributeLayoutStyle style;
   final String initialHeading;
   final String initialName;
   final String initialDates;
   final String initialMessage;
-  final String previewImagePath;
-  final TemplatePalette palette;
-}
-
-class TemplatePalette {
-  const TemplatePalette({
-    required this.name,
-    required this.backgroundTop,
-    required this.backgroundBottom,
-    required this.headingColor,
-    required this.bodyColor,
-  });
-
-  final String name;
+  final String defaultBackgroundAssetPath;
   final Color backgroundTop;
   final Color backgroundBottom;
   final Color headingColor;
   final Color bodyColor;
+  final Color accentColor;
 }
+
+const List<String> tributeBackgroundAssets = [
+  'assets/background templates/background01.png',
+  'assets/background templates/background02.png',
+  'assets/background templates/background03.png',
+  'assets/background templates/background04.png',
+  'assets/background templates/background05.png',
+  'assets/background templates/background06.png',
+  'assets/background templates/background07.png',
+  'assets/background templates/background08.png',
+  'assets/background templates/background09.png',
+];
+
+const List<MemorialTemplate> memorialTemplates = [
+  MemorialTemplate(
+    id: 'template_1',
+    name: 'Template 1',
+    subtitle: 'Classic maroon remembrance format',
+    templateAssetPath: 'assets/templates/template 1.png',
+    placeholderPortraitPath: 'assets/images/wel1.png',
+    style: TributeLayoutStyle.classicMaroon,
+    initialHeading: 'In Loving Memory',
+    initialName: 'Margaret Williams',
+    initialDates: 'March 8, 1952 - July 21, 2023',
+    initialMessage: 'Forever remembered. Forever cherished.',
+    defaultBackgroundAssetPath: 'assets/background templates/background01.png',
+    backgroundTop: Color(0xFFF7EFE3),
+    backgroundBottom: Color(0xFFEEE1D0),
+    headingColor: Color(0xFF5A1D2A),
+    bodyColor: Color(0xFF3E302A),
+    accentColor: Color(0xFF8B4752),
+  ),
+  MemorialTemplate(
+    id: 'template_2',
+    name: 'Template 2',
+    subtitle: 'Clean modern remembrance format',
+    templateAssetPath: 'assets/templates/template 2.png',
+    placeholderPortraitPath: 'assets/images/web2.jpg',
+    style: TributeLayoutStyle.modernGray,
+    initialHeading: 'Remembering',
+    initialName: 'James Carter',
+    initialDates: 'November 3, 1948 - January 14, 2024',
+    initialMessage: 'Your light continues to shine through us.',
+    defaultBackgroundAssetPath: 'assets/background templates/background04.png',
+    backgroundTop: Color(0xFFF7F7F7),
+    backgroundBottom: Color(0xFFEFEFEF),
+    headingColor: Color(0xFF2E3135),
+    bodyColor: Color(0xFF3D4044),
+    accentColor: Color(0xFFB8B8B8),
+  ),
+  MemorialTemplate(
+    id: 'template_3',
+    name: 'Template 3',
+    subtitle: 'Elegant rose remembrance format',
+    templateAssetPath: 'assets/templates/template 3.png',
+    placeholderPortraitPath: 'assets/images/wel3.jpg',
+    style: TributeLayoutStyle.roseElegance,
+    initialHeading: 'In Loving Memory',
+    initialName: 'Patricia Robinson',
+    initialDates: 'April 2, 1960 - September 30, 2021',
+    initialMessage: 'Those we love never truly leave us.',
+    defaultBackgroundAssetPath: 'assets/background templates/background07.png',
+    backgroundTop: Color(0xFFF8F0E5),
+    backgroundBottom: Color(0xFFEFE1D3),
+    headingColor: Color(0xFF5B1D2A),
+    bodyColor: Color(0xFF4A2E2E),
+    accentColor: Color(0xFF8A3B49),
+  ),
+];

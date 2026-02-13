@@ -26,7 +26,10 @@ flutter:
     - assets/splash_logo2.png         # square logo (iOS + Android <12)
     - assets/splash_1080.png
     - assets/flowers.png
-    - assets/candle.png          
+    - assets/candle.png
+    - assets/images/
+    - assets/templates/
+    - "assets/background templates/"
 
 flutter_native_splash:
   color: "#FFFFFF"
@@ -49,4 +52,3 @@ flutter_launcher_icons:
   adaptive_icon_foreground: assets/splash_logo2.png
   adaptive_icon_background: "#FFFFFF"
   remove_alpha_ios: true
-
