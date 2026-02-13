@@ -3,6 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'memories_store.dart';
+import 'my_memories_page.dart';
+
 class TemplateBrowserPage extends StatelessWidget {
   const TemplateBrowserPage({super.key});
 
@@ -123,6 +126,47 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
     });
   }
 
+  String _resolvedText(String value, String fallback) {
+    final String trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return fallback;
+    }
+    return trimmed;
+  }
+
+  void _saveToMyMemories() {
+    final SavedTribute tribute = SavedTribute(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      templateId: _selectedTemplate.id,
+      backgroundAssetPath: _selectedBackgroundAssetPath,
+      heading: _resolvedText(
+        _headingController.text,
+        _selectedTemplate.initialHeading,
+      ),
+      name: _resolvedText(_nameController.text, _selectedTemplate.initialName),
+      dates: _resolvedText(
+        _datesController.text,
+        _selectedTemplate.initialDates,
+      ),
+      message: _resolvedText(
+        _messageController.text,
+        _selectedTemplate.initialMessage,
+      ),
+      photoBytes: _photoBytes == null ? null : Uint8List.fromList(_photoBytes!),
+      createdAt: DateTime.now(),
+    );
+
+    MemoriesStore.add(tribute);
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const MyMemoriesPage()),
+      (route) => route.isFirst,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,16 +241,7 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'Choose Background',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: _primary,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   SizedBox(
                     height: 110,
                     child: ListView.separated(
@@ -276,6 +311,23 @@ class _TemplateEditorPageState extends State<TemplateEditorPage> {
                     hint: 'Forever remembered. Forever cherished.',
                     maxLines: 3,
                     onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _saveToMyMemories,
+                      icon: const Icon(Icons.bookmark_added_rounded),
+                      label: const Text('Save to My Memories'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

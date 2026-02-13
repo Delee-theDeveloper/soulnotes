@@ -1,1 +1,5 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - lib_backup_2025_11_17/**

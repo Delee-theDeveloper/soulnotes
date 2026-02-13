@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'my_memories_page.dart';
 import 'template_flow.dart';
 
 class HomePage extends StatelessWidget {
@@ -106,9 +107,16 @@ class HomePage extends StatelessWidget {
                   const SizedBox(height: 14),
                   _HomeCard(
                     title: 'My Memories',
-                    subtitle: 'Continue writing and updating tributes',
+                    subtitle: 'All your saved tributes in one place',
                     bgColor: _cardLighter,
                     imagePath: 'assets/candle.png',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const MyMemoriesPage(),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 14),
                   const _VintageDivider(),
@@ -127,7 +135,10 @@ class HomePage extends StatelessWidget {
                       SizedBox(height: 4),
                       Text(
                         'Recent updates from shared tributes.',
-                        style: TextStyle(fontSize: 14, color: Color(0xFF7A6253)),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF7A6253),
+                        ),
                       ),
                       SizedBox(height: 12),
                     ],
@@ -197,50 +208,22 @@ class HomePage extends StatelessWidget {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_rounded),
-              activeIcon: _NavActiveIcon(icon: Icons.home_rounded),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications_active_rounded),
-              activeIcon: _NavActiveIcon(
-                icon: Icons.notifications_active_rounded,
-              ),
               label: 'Reminders',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
-              activeIcon: _NavActiveIcon(icon: Icons.person_outline),
               label: 'Profile',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.more_horiz),
-              activeIcon: _NavActiveIcon(icon: Icons.more_horiz),
               label: 'More',
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _NavActiveIcon extends StatelessWidget {
-  const _NavActiveIcon({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: HomePage._primary,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Icon(
-        icon,
-        size: 20,
-        color: Colors.white,
       ),
     );
   }
