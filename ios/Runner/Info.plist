@@ -49,5 +49,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>SoulNotes needs access to your photos so you can upload a loved one's picture to a tribute template.</string>
 </dict>
 </plist>
